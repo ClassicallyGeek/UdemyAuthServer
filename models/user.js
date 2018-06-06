@@ -1,3 +1,4 @@
+const bcrypt = require('bcrypt-nodejs');
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema; // Schema is what we use to tell mongoose what fields our model will have.
 
@@ -9,6 +10,27 @@ const userSchema = new Schema({
     lowercase: true
   },
   password: String
+});
+
+// On save hook, encrypt password
+// before save run this function
+userSchema.pre('save', function(next) {
+  // the context of the function is the user model.
+  const user = this;
+
+  // generate a salt - randomly generated string of chars.
+  bcrypt.genSalt(10, (err, salt) => {
+    if (err) { return next(err); }
+
+    // Hash/encrypt password using the salt - takes callback
+    bcrypt.hash(user.password, salt, null, (err, hash) => {
+      if (err) { return next(err) }
+      // overwrite plain text password w/encrypted password.
+      user.password = hash; // salt + plain text => salt + hashed password
+      // next means save the model.
+      next();
+    });
+  })
 });
 
 // Create the model class

@@ -6,6 +6,13 @@ const morgan = require('morgan'); // A logging framework.
 
 const app = express();
 const router = require ('./router');
+const mongoose = require('mongoose');
+
+//DB Setup
+mongoose.connect('mongodb://localhost:27017/auth')
+  .catch( function(e) {
+    console.log('[ERROR] ',e);
+  });
 // App Setup - Getting Express the way we want it.
 
 /* Morgan and bodyParser is express middleware- any incoming request gets passed to these two */

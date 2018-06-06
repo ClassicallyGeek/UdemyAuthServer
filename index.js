@@ -3,6 +3,7 @@ const express = require('express');
 const http = require('http'); // Native Node Library that works with incoming http requests.
 const bodyParser = require('body-parser'); // used to Parse incoming requests
 const morgan = require('morgan'); // A logging framework.
+const cors = require('cors'); // Allow cross-origin stuff
 
 const app = express();
 const router = require ('./router');
@@ -17,6 +18,7 @@ mongoose.connect('mongodb://localhost:27017/auth')
 
 /* Morgan and bodyParser is express middleware- any incoming request gets passed to these two */
 app.use(morgan('combined'));
+app.use(cors()); // Allows requests from "any domain in the world" In the Real World: we can configure a whitelist.
 app.use(bodyParser.json({ type: '*/*' })); // Parse incoming requests into JSON
 router(app);
 

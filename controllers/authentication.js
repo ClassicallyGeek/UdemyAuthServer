@@ -36,3 +36,10 @@ exports.signup = function(req, res, next) {
     });
   });
 }
+
+exports.signin = function(req, res, next) {
+  // User has already has their email and password authenticated
+  // Give them a token
+  const user = req.user; // this comes from the localstrategy done callback- it returns user.
+  res.send({token: tokenForUser(user)});
+}

@@ -13,8 +13,21 @@ const localOptions = { usernameField: 'email' }; // local is expecting a usernam
                                                  // We have to tell them the field is called email.
 const localLogin = new LocalStrategy( localOptions, (email, password, done) => {
   // Verify username & Password
-  // Call done w/user if correct username & Password
-  // otherwise call done with false
+  User.findOne( { email }, (err, user) => {
+    if (err) { return done(err); }
+    if (!user ) { return done(null, false); }
+
+    // Compare passwords: (plain text) passwords === (encrypted) user.password?
+    user.comparePassword(password, (err, isMatch) =>{
+      if (err) { return done(err); }
+      if (!isMatch) { return done(null, false); }
+
+      // Call done w/user if correct username & Password
+      return done(null, user);
+    });
+
+  });
+
 });
 
 //Setup options for JWT Strategy
@@ -44,3 +57,4 @@ const jwtLogin = new JwtStrategy(jwtOptions, (payload, done) => {
 
 // Tell passport to use this strategy.
 passport.use(jwtLogin);
+passport.use(localLogin);

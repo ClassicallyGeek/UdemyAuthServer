@@ -33,6 +33,16 @@ userSchema.pre('save', function(next) {
   })
 });
 
+// Methods object says whenever we make a user object it should have access to functions on method property
+userSchema.methods.comparePassword = function(candidatePassword, callback) {
+  // bcrypt will compare the passwords for us and let us know how it went.
+  bcrypt.compare(candidatePassword, this.password, (err, isMatch) => {
+    if (err) { return callback(err); }
+
+    callback(null, isMatch);
+  })
+}
+
 // Create the model class
 const ModelClass = mongoose.model('user', userSchema);
 
